@@ -2,7 +2,7 @@
 <launch>
     <!-- ************************ DIRECTORY ********************** -->
     <param name="dir_package" value="$(find placeNet)" />
-    <param name="dir_dataset" value="$(find map_db_generator)/result" />
+    <param name="dir_dataset" value="$(find map_db_generator)/result_kcity" />
     <param name="dir_pcd" value="$(find placeNet)/data/map.pcd" />
 
     <param name="train_mode" value="False" />

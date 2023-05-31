@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
 <launch>
 
+    <param name="point_topic_name" value="/leica/position" />
+    <param name="image_topic_name" value="/cam0/image_raw" />
+    <!-- <param name="image_topic_name" value="/cv_camera/image_raw" /> -->
     <param name="odom_topic_name" value="/odom" />
-    <param name="image_topic_name" value="/cv_camera/image_raw" />
 
-    <param name="save_term" value="3.0" /> <!-- unit = meter -->
+
+
+    <param name="image_encoding" value="bgr8" />
+    <param name="image_encoding" value="mono8" />
+
+    <param name="save_term" value="0.1" /> <!-- unit = meter -->
     <param name="package_dir" value="$(find map_db_generator)" />
 
     <node pkg="map_db_generator" type="map_saver.py" name="dataset_gen" output="screen" />

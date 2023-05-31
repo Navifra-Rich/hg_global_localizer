@@ -111,3 +111,9 @@ def main():
 if __name__=="__main__":
     main()
     
+# 1. AP access
+# name : A200-0733 , pw : bvUNdWJo  
+# 2. keygen
+# ssh-keygen -f "/home/hgnaseel/.ssh/known_hosts" -R "10.42.0.1"
+# 3. ssh
+# ssh husky@10.42.0.1, pw : clearpath

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- ************************ DIRECTORY ********************** -->
+    <param name="dir_package" value="$(find placeNet)" />
+    <param name="dir_dataset" value="$(find map_db_generator)/result_HM2" />
+    <param name="train_mode" value="True" />
+
+
+    <!-- ************************ SETTABLE PARAM ********************** -->
+    <param name="dir_pcd" value="$(find placeNet)/data/map.pcd" />
+    <param name="model_name" value="HM2" />
+ 
+    <!-- ************************ PACKAGES ********************** -->
+    <node pkg="placeNet" type="kidnapper.py" name="kidnapper" output="screen" />
+
+</launch>
