@@ -1,0 +1,7 @@
+*.pkl
+result/
+*/__pycache__/*
+*.pyc
+*/result*/
+*/data/*
+data/

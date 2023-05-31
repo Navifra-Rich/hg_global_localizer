@@ -17,6 +17,11 @@ img = None
 data_list=[]
 scene_idx = 0
 
+ODOM_TOPIC_NAME = rospy.get_param("odom_topic_name")
+IMAGE_TOPIC_NAME = rospy.get_param("image_topic_name")
+SAVE_TERM = rospy.get_param("save_term")
+PACKAGE_DIR = rospy.get_param("package_dir")
+
 def img_callback(msg):
     global img
     print("Received an image!")
@@ -36,7 +41,7 @@ def odom_callback(msg):
     dist_y = abs(odom.pose.pose.position.y - new_y)
     dist = dist_x*dist_x + dist_y*dist_y
 
-    if dist>3:
+    if dist>SAVE_TERM:
         save_db()
         pos_x , pos_y = new_x, new_y
         odom = msg
@@ -45,7 +50,7 @@ def odom_callback(msg):
 def save_db():
     global scene_idx, img, odom, data_list
     # save img
-    img_path = f'/home/hgnaseel/data/global_map/{scene_idx}.jpg'  # 저장할 이미지 파일 경로 및 이름을 지정합니다
+    img_path = f'{PACKAGE_DIR}/result/{scene_idx}.jpg'  # 저장할 이미지 파일 경로 및 이름을 지정합니다
     cv2.imwrite(img_path, img)
 
     px = odom.pose.pose.position.x
@@ -62,7 +67,7 @@ def save_db():
     # dic[""]
     
     json_str = json.dumps(data_list, indent=2)
-    file_path = f'/home/hgnaseel/data/global_map/meta.json'  # 저장할 JSON 파일 경로 및 이름을 지정합니다.
+    file_path = f'{PACKAGE_DIR}/result/meta.json'  # 저장할 JSON 파일 경로 및 이름을 지정합니다.
     with open(file_path, 'w') as file:
         file.write(json_str)
 
@@ -74,8 +79,8 @@ if __name__ == '__main__':
     print("hello world")
 
     # ------------------------- Subscribers ----------------------------------
-    odom_sub = rospy.Subscriber("/odom", Odometry, odom_callback)
-    img_sub = rospy.Subscriber("/cv_camera/image_raw", Image, img_callback)
+    odom_sub = rospy.Subscriber(ODOM_TOPIC_NAME, Odometry, odom_callback)
+    img_sub = rospy.Subscriber(IMAGE_TOPIC_NAME, Image, img_callback)
 
     # ------------------------- Publishers -----------------------------------
 
