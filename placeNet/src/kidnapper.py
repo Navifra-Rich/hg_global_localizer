@@ -8,6 +8,7 @@ PACKAGE_PATH = rospy.get_param("dir_package")
 sys.path.append(os.path.join(PACKAGE_PATH, "include", "placeNet"))
 
 from knn import KNN
+from orb import ORB_Matcher
 from sensor_msgs.msg import PointCloud2, PointField
 import sensor_msgs.point_cloud2 as pc2
 from visualization_msgs.msg import Marker, MarkerArray
@@ -18,6 +19,7 @@ import json
 
 TRAIN_MODE = rospy.get_param("train_mode")
 DATASET_PATH = rospy.get_param("dir_dataset")
+DATASET_TEST_PATH = rospy.get_param("dir_dataset_test")
 MODEL_NAME = rospy.get_param("model_name")
 
 class Kidnapper:
@@ -26,6 +28,7 @@ class Kidnapper:
         self.pub = rospy.Publisher("global_map", PointCloud2, queue_size=10)
         self.pcd_msg = None
         self.knn = KNN()
+        self.orb = ORB_Matcher()
 
         self.meta_path = os.path.join(DATASET_PATH, "meta.json")
         self.meta_data = json.loads(open(self.meta_path).read())
@@ -37,6 +40,11 @@ class Kidnapper:
     def setKNN(self):
         self.knn.package_path = PACKAGE_PATH
         self.knn.dataset_path = DATASET_PATH
+
+        self.orb.package_path = PACKAGE_PATH
+        self.orb.dataset_path = DATASET_PATH
+        self.orb.getImgList()
+
         # -------------- Spe ----------------------
         # self.knn.model_path = os.path.join(PACKAGE_PATH, "data", "myModel_my.pkl")
         # self.knn.json_path = os.path.join(PACKAGE_PATH, "data", "train_my.json")
@@ -44,14 +52,22 @@ class Kidnapper:
         
         return
 
-    def getKNNbyIdx(self, idx):
+    def getNearestByORB(self, idx):
+        if self.cur_idx == idx:
+            return
+        print(f"WHY TWICE? {self.cur_idx}  {idx}")
+        print("11111111111111111111111111111111 - ORB")
+        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
+        places = kidnapper.orb.save_nearest_img(img_path)
+
+        return
+    
+    def getNearestByKNN(self, idx):
         if self.cur_idx == idx:
             return
         print("11111111111111111111111111111111")
-        self.cur_idx = idx
-        img_path = os.path.join(DATASET_PATH, f"{idx}.jpg")
+        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
         places = kidnapper.knn.save_nearest_img(img_path)
-        print("22222222222222222222222222222222")
         print(places)
         self.markers = MarkerArray()
 
@@ -76,7 +92,10 @@ class Kidnapper:
             self.markers.markers.append(marker)
         # print(self.markers)
 def image_idx_callback(msg):
-    kidnapper.getKNNbyIdx(msg.data)
+    kidnapper.getNearestByKNN(msg.data)
+    kidnapper.getNearestByORB(msg.data)
+    kidnapper.cur_idx = msg.data
+
 
 kidnapper = Kidnapper()
 

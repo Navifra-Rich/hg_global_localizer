@@ -49,7 +49,7 @@ class KNN():
             print(idx)
             print(file)
             print(file.split(os.sep)[-1][-3:])
-            if idx%20==0:
+            if idx%50==0:
                 class_idx +=1
             img_idx +=1
             img = cv2.imread(file)
@@ -72,9 +72,9 @@ class KNN():
 
         new_vector = image_to_vector(img)
         new_vector = np.array([new_vector])  # 2차원 배열로 변환
-        distances, indices = self.knn.kneighbors(new_vector, n_neighbors=10)
-
-        print(indices)
+        distances, indices = self.knn.kneighbors(new_vector, n_neighbors=4)
+        print(f"DISTANCE {distances}")
+        print(f"INDECES {indices}")
         img_path_list = []
         img_idx_list = []
         for idx in indices[0]:
@@ -90,6 +90,8 @@ class KNN():
         for idx in range(0, len(near_list),2):
             img1 = cv2.imread(near_list[idx])
             img2 = cv2.imread(near_list[idx+1])
+            img1 = cv2.putText(img1, str(idx+1), (350, 40), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 3, cv2.LINE_AA)
+            img2 = cv2.putText(img2, str(idx+2), (350, 40), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 3, cv2.LINE_AA)
             v_combined = np.vstack([img1,img2])
             near_img_list.append(v_combined)
         near_combined = np.hstack(near_img_list)

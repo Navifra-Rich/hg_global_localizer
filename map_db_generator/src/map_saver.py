@@ -29,6 +29,7 @@ def img_callback(msg):
     global img
     # print("Received an image!")
     img = bridge.imgmsg_to_cv2(msg, IMAGE_ENCODING)
+    heartbeat(Odometry())
 
 def point_callback(msg):
     global firstRun
@@ -43,7 +44,7 @@ def point_callback(msg):
 def odom_callback(msg):
     global firstRun
     print("Received an odom!")
-    heartbeat(msg.data)
+    heartbeat(msg)
 
 def firstRunCheck(new_x, new_y):
     global firstRun
@@ -82,9 +83,9 @@ def save_db(odom):
 
     scene_idx +=1
 
-
+save_idx = 0
 def heartbeat(odom):
-    global pos_x, pos_y, pos_z
+    global pos_x, pos_y, pos_z, save_idx
     new_x, new_y, new_z = odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z
     
     os.system("clear")
@@ -97,10 +98,10 @@ def heartbeat(odom):
     dist = getDist(pos_x, pos_y, pos_z, new_x, new_y, new_z)
     print(f"    DIST {dist}")
 
-
-    if dist>SAVE_TERM:
+    if dist>SAVE_TERM or save_idx % 35 == 0:
         save_db(odom)
         pos_x , pos_y, pos_z = new_x, new_y, new_z
+    save_idx += 1
 
 
 if __name__ == '__main__':

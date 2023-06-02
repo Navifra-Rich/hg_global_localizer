@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- ************************ DIRECTORY ********************** -->
+    <param name="dir_package" value="$(find placeNet)" />
+    <param name="dir_dataset" value="$(find map_db_generator)/result_gangnam" />
+    <param name="dir_dataset_test" value="$(find map_db_generator)/result_gangnam3" />
+    <param name="dir_pcd" value="$(find placeNet)/data/gangnam.pcd" />
+
+    <param name="train_mode" value="False" />
+
+    <!-- ************************ SETTABLE PARAM ********************** -->
+
+    <param name="model_name" value="gangnam" />
+ 
+    <!-- ************************ PACKAGES ********************** -->
+    <node pkg="placeNet" type="kidnapper.py" name="kidnapper" output="screen" />
+    <node pkg="placeNet" type="pcd_reader" name="pcd_reader" output="screen" />
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find placeNet)/rviz/map.rviz" />
+
+</launch>
