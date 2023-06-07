@@ -55,22 +55,40 @@ class Kidnapper:
     def getNearestByORB(self, idx):
         if self.cur_idx == idx:
             return
-        print(f"WHY TWICE? {self.cur_idx}  {idx}")
-        print("11111111111111111111111111111111 - ORB")
-        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
-        places = kidnapper.orb.save_nearest_img(img_path)
 
-        return
+        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
+        places = kidnapper.orb.save_nearest_img(img_path)[0]
+
+        for idx, item in enumerate(places):
+            pose = kidnapper.meta_data[item[0]]["odom"]
+            marker = Marker()
+            marker.id = idx
+            marker.header.frame_id = "map"
+            marker.header.stamp = rospy.Time.now()
+            marker.lifetime = rospy.Duration(15)
+            marker.type = Marker.CUBE
+            marker.pose.position.x = pose[0]
+            marker.pose.position.y = pose[1]
+            # marker.pose.position.z = 5.5
+            marker.scale.x = 1.7
+            marker.scale.y = 1.7
+            marker.scale.z = 1.7
+            marker.color.a = 1.0
+            marker.color.r = 1.0
+            marker.color.g = 0.0
+            marker.color.b = 0.0
+            self.markers.markers.append(marker)
+            return
     
     def getNearestByKNN(self, idx):
         if self.cur_idx == idx:
             return
-        print("11111111111111111111111111111111")
         img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
         places = kidnapper.knn.save_nearest_img(img_path)
         print(places)
+        return
+    
         self.markers = MarkerArray()
-
         for idx, item in enumerate(places):
             pose = kidnapper.meta_data[item]["odom"]
             marker = Marker()
@@ -109,12 +127,14 @@ def main():
     pub_markers = rospy.Publisher('/place_marker', MarkerArray, queue_size=1)
 
     rate = rospy.Rate(10) # 10hz
+    temp_idx = 0
     while not rospy.is_shutdown():
         # print("LOOP")
         # print(kidnapper.markers)
+        image_idx_callback(Int64(temp_idx))
         rate.sleep()
-        # print(kidnapper.markers)
         pub_markers.publish(kidnapper.markers)
+        temp_idx+=15
 
 def train():
     kidnapper.setKNN()

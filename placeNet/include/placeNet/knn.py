@@ -67,7 +67,7 @@ class KNN():
         self.knn.fit(images, labels)
     
     def save_nearest_img(self, img_path):
-
+        start = time.time()
         img = cv2.imread(img_path)
 
         new_vector = image_to_vector(img)
@@ -80,8 +80,8 @@ class KNN():
         for idx in indices[0]:
             img_idx_list.append(idx)
             img_path_list.append(os.path.join(self.dataset_path, f"{idx}.jpg"))
-        self.publish_imgs(img_path, img_path_list)
-    
+        # self.publish_imgs(img_path, img_path_list)
+        print(f"KNNTIME {time.time()-start}")
         return img_idx_list # = [ [idx, weight], ...... ]
     
     def publish_imgs(self, origin, near_list):
