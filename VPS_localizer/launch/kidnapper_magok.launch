@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- ************************ Change DIRECTORY here ********************** -->
+
+    <!-- Database -->
+    <param name="dir_dataset" value="$(find map_db_generator)/result_fullpath" />
+    <!-- Test set -->
+    <param name="dir_dataset_test" value="$(find map_db_generator)/result_partial" />
+
+    <!-- ********************************************************************* -->
+
+
+    <!--  PACKAGES  -->
+    <param name="dir_package" value="$(find VPS_localizer)" />
+    <node pkg="VPS_localizer" type="kidnapper.py" name="kidnapper" output="screen" />
+
+</launch>

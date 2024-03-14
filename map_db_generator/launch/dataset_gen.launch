@@ -1,20 +1,16 @@
 <?xml version="1.0"?>
 <launch>
 
-    <param name="point_topic_name" value="/leica/position" />
 
-    <!-- <param name="image_topic_name" value="/cam0/image_raw" /> -->
-    <!-- <param name="image_topic_name" value="/cv_camera/image_raw" /> -->
-    <param name="image_topic_name" value="/camera/color/image_raw" />
-    
-    <param name="odom_topic_name" value="/odom" />
+    <!--***************************Change Topic Name HERE!!!************************************************** -->
+    <!-- Global pos -->
+    <param name="point_topic_name" value="/localization/robot_pos" />
+    <!-- Image Data -->
+    <param name="image_topic_name" value="/camera2/color/image_raw/compressed" />
+    <!--******************************************************************************************* -->
 
-
-
+    <param name="save_term" value="0.3" />  <!-- unit = meter -->
     <param name="image_encoding" value="bgr8" />
-    <!-- <param name="image_encoding" value="mono8" /> -->
-
-    <param name="save_term" value="2.0" /> <!-- unit = meter -->
     <param name="package_dir" value="$(find map_db_generator)" />
 
     <node pkg="map_db_generator" type="map_saver.py" name="dataset_gen" output="screen" />
