@@ -5,8 +5,11 @@
 
     <!-- Database -->
     <param name="dir_dataset" value="$(find map_db_generator)/result_fullpath" />
-    <!-- Test set -->
+
+
+    <!-- Test set. Use Only Testset Mode-->
     <param name="dir_dataset_test" value="$(find map_db_generator)/result_partial" />
+    <param name="image_topic_name" value="/camera2/color/image_raw/compressed" />
 
     <!-- ********************************************************************* -->
 

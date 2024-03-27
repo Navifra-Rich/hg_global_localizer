@@ -8,11 +8,15 @@ import cv2
 import random
 from kaze import KAZE_Matcher
 from std_msgs.msg import Int64
+from sensor_msgs.msg import CompressedImage
+from cv_bridge import CvBridge, CvBridgeError
 import json
 
 PACKAGE_PATH = rospy.get_param("dir_package")
 DATASET_PATH = rospy.get_param("dir_dataset")
 DATASET_TEST_PATH = rospy.get_param("dir_dataset_test")
+IMAGE_TOPIC_NAME = rospy.get_param("image_topic_name")
+bridge = CvBridge()
 
 sys.path.append(os.path.join(PACKAGE_PATH, "include", "VPS_localizer"))
 
@@ -25,17 +29,62 @@ class Kidnapper:
         self.testset_json = json.loads(open(self.testset_path).read())
         self.setKAZE()
 
+    def setPubSub(self):
+        print(f"Image Topic {IMAGE_TOPIC_NAME}")
+        self.img_sub     = rospy.Subscriber(IMAGE_TOPIC_NAME, CompressedImage, self.img_callback)
+
     def setKAZE(self):
         self.kaze.package_path = PACKAGE_PATH
         self.kaze.dataset_path = DATASET_PATH
         self.kaze.getImgList()
 
-    def getNearestByKAZE(self, idx):
-        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
-        places = kidnapper.kaze.save_nearest_img(img_path)
+    def getNearestByKAZE(self, image):
+        
+        places = kidnapper.kaze.save_nearest_img(image)
         return places
     
-def image_idx_callback(msg):
+    def getNearestByKAZE_TestSet(self, idx):
+        img_path = os.path.join(DATASET_TEST_PATH, f"{idx}.jpg")
+        places = kidnapper.kaze.save_nearest_img(cv2.imread(img_path))
+        return places
+    
+    def img_callback(self, msg):
+
+        # image Msg에서 OpenCVImage로 변경
+        img = bridge.compressed_imgmsg_to_cv2(msg)
+        img = cv2.flip(img, 0)          # 원본 이미지 뒤집어져있는 이슈
+        target_width = int(1920/4)      # 다운샘플링
+        target_height = int(1080/4)     # 다운샘플링
+        print(f"Resize{target_width} {target_height}")
+        img = cv2.resize(img, (target_width, target_height))
+        # print(f"Image path {DATASET_TEST_PATH} ")
+
+        kaze_result = kidnapper.getNearestByKAZE(img)
+        print(f"KAZE RESULT {kaze_result}")
+
+        ## PARAMETER
+        output_save_path = os.path.join(PACKAGE_PATH,"result")
+        os.makedirs(output_save_path, exist_ok=True)
+
+        originMap_image_path = os.path.join(PACKAGE_PATH, "data", "magok_superstart.png")
+        saveMap_image_path = os.path.join(PACKAGE_PATH, "result", "resultMap.png")
+
+
+        # groundtruth_pose = kidnapper.testset_json[msg.data]["odom"]
+        estimated_pose = self.dataset_json[kaze_result[0]]["odom"]
+
+
+        img_map = cv2.imread(originMap_image_path)
+        # cv2.circle(img_map, (int(groundtruth_pose[0]*100 + img_map.shape[1]/2), int( -groundtruth_pose[1]*100 + img_map.shape[0]/2)) , 10, (0, 0, 255) , -1)    
+        cv2.circle(img_map, (int(estimated_pose[0]*100 + img_map.shape[1]/2), int( -estimated_pose[1]*100 + img_map.shape[0]/2)) , 10, (255, 0, 0) , -1)    
+
+        cv2.imwrite(saveMap_image_path, img_map)
+
+        # print(f"Input  Pose  {groundtruth_pose}")
+        print(f"Estimated Pose {estimated_pose}")
+        print()
+
+def EstimateDatasets(msg):
     print(f"Image path {DATASET_TEST_PATH} ")
 
     print(f"Test Index {msg.data}")
@@ -73,19 +122,24 @@ def image_idx_callback(msg):
     print(f"Input  Pose  {groundtruth_pose}")
     print(f"Output Pose1 {estimated_pose}")
     print()
-    print()
+
 
 kidnapper = Kidnapper()
-
 def main():
     rospy.init_node('kidnapper', anonymous=True)
 
-    rate = rospy.Rate(10) # 10hz
-    while not rospy.is_shutdown():
-        print("LOOP")
-        random_idx = random.randint(0, 240)
-        image_idx_callback(Int64(random_idx))
-        rate.sleep()
+    kidnapper.setPubSub()
+
+    rospy.spin()
+
+
+
+    # rate = rospy.Rate(10) # 10hz
+    # while not rospy.is_shutdown():
+    #     print("LOOP")
+    #     random_idx = random.randint(0, 240)
+    #     EstimateDatasets(Int64(random_idx))
+    #     rate.sleep()
 
     return
 

@@ -21,8 +21,8 @@ class KAZE_Matcher:
         # print(self.img_path_list)
         self.img_path_list.sort(key = lambda x: int(x.split(os.sep)[-1][:-4]))   # get rid of .jpg, .meta
 
-    def save_nearest_img(self, img_path):
-        input_img = cv2.imread(img_path)
+    def save_nearest_img(self, input_img):
+        print(f"Image Shape {input_img.shape}")
         kp_input_kaze, des_input_kaze = self.kaze.detectAndCompute(cv2.cvtColor(input_img[:,:,:], cv2.COLOR_BGR2GRAY), None)
         dist_list = []
         dist_list_kaze = []
