@@ -4,12 +4,18 @@
     <!-- ************************ Change DIRECTORY here ********************** -->
 
     <!-- Database -->
-    <param name="dir_dataset" value="$(find map_db_generator)/result_fullpath" />
+    <param name="dir_dataset" value="$(find map_db_generator)/result_dataset" />
 
 
-    <!-- Test set. Use Only Testset Mode-->
-    <param name="dir_dataset_test" value="$(find map_db_generator)/result_partial" />
-    <param name="image_topic_name" value="/camera2/color/image_raw/compressed" />
+    <!-- True = ROS topic, False = Testset -->
+    <param name="realtime_mode" value="False" />
+
+    <!-- Test set.    - Use Only Realtime False-->
+    <param name="dir_dataset_test" value="$(find map_db_generator)/result_testset" />
+
+    <!-- Input data.  - Use Only Realtime True-->
+    <param name="left_image_topic_name" value="/camera1/color/image_raw/compressed" />
+    <param name="right_image_topic_name" value="/camera2/color/image_raw/compressed" />
 
     <!-- ********************************************************************* -->
 

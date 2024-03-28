@@ -40,11 +40,13 @@ class KAZE_Matcher:
             for m, n in match_kaze:
                 if m.distance < 0.5 * n.distance:
                     good_match_num_kaze+=1
-                    
-            dist_list.append([idx, good_match_num])
-            dist_list_kaze.append([idx, good_match_num_kaze])
+            if True:
+            # if good_match_num_kaze>10:
+                dist_list.append([idx, good_match_num])
+                dist_list_kaze.append([idx, good_match_num_kaze])
         dist_list_kaze.sort(key=lambda x : x[1], reverse=True)
-        return [sublist[0] for sublist in dist_list_kaze[:4]]
+        print(f"KAZE DIST {dist_list_kaze}")
+        return [sublist[0] for sublist in dist_list_kaze]
     
 
 
