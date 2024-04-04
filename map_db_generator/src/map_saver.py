@@ -34,6 +34,8 @@ RIGHT_IMAGE_TOPIC_NAME = rospy.get_param("right_image_topic_name")
 SAVE_TERM = rospy.get_param("save_term")
 PACKAGE_DIR = rospy.get_param("package_dir")
 RESULT_FOLDER = rospy.get_param("result_folder")
+IMAGE_WIDTH = rospy.get_param("image_width")
+IMAGE_HEIGHT = rospy.get_param("image_height")
 
 # 이미지 콜백 함수 1
 def left_image_callback(data):
@@ -42,8 +44,8 @@ def left_image_callback(data):
     image_left = bridge.compressed_imgmsg_to_cv2(data, "bgr8")
     # print(f"Left {image_left.shape}")
     # image_left = cv2.flip(image_left, 0)
-    target_width = int(1920/4)  # 변경하려는 너비
-    target_height = int(1080/4)  # 변경하려는 높이
+    target_width = int(IMAGE_WIDTH)  # 변경하려는 너비
+    target_height = int(IMAGE_HEIGHT)  # 변경하려는 높이
     with lock:
         image_left_ = cv2.resize(image_left, (target_width, target_height))
 
@@ -57,8 +59,8 @@ def right_image_callback(data):
 
     image_right = cv2.flip(image_right, 0)
     image_right = cv2.flip(image_right, 1)
-    target_width = int(1920/4)  # 변경하려는 너비
-    target_height = int(1080/4)  # 변경하려는 높이
+    target_width = int(IMAGE_WIDTH)  # 변경하려는 너비
+    target_height = int(IMAGE_HEIGHT)  # 변경하려는 높이
     with lock:
         image_right_ = cv2.resize(image_right, (target_width, target_height))
 

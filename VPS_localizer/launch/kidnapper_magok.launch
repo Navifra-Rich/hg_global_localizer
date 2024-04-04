@@ -16,7 +16,8 @@
     <!-- Input data.  - Use Only Realtime True-->
     <param name="left_image_topic_name" value="/camera1/color/image_raw/compressed" />
     <param name="right_image_topic_name" value="/camera2/color/image_raw/compressed" />
-
+    <param name="image_height" value="480" />
+    <param name="image_width" value="640" />
     <!-- ********************************************************************* -->
 
 

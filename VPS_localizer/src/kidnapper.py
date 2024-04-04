@@ -21,7 +21,8 @@ DATASET_TEST_PATH = rospy.get_param("dir_dataset_test")
 
 LEFT_IMAGE_TOPIC_NAME = rospy.get_param("left_image_topic_name")
 RIGHT_IMAGE_TOPIC_NAME = rospy.get_param("right_image_topic_name")
-
+IMAGE_WIDTH = rospy.get_param("image_width")
+IMAGE_HEIGHT = rospy.get_param("image_height")
 bridge = CvBridge()
 combined_image = None
 image_left_ = None
@@ -71,8 +72,8 @@ class Kidnapper:
         # ROS 이미지 메시지를 OpenCV 이미지로 변환
         image_left = bridge.compressed_imgmsg_to_cv2(data, "bgr8")
         # image_left = cv2.flip(image_left, 0)
-        target_width = int(1920/4)  # 변경하려는 너비
-        target_height = int(1080/4)  # 변경하려는 높이
+        target_width = int(IMAGE_WIDTH)  # 변경하려는 너비
+        target_height = int(IMAGE_HEIGHT)  # 변경하려는 높이
         with lock:
             image_left_ = cv2.resize(image_left, (target_width, target_height))
 
@@ -84,8 +85,8 @@ class Kidnapper:
         image_right = bridge.compressed_imgmsg_to_cv2(data, "bgr8")
         image_right = cv2.flip(image_right,0)
         image_right = cv2.flip(image_right,1)
-        target_width = int(1920/4)  # 변경하려는 너비
-        target_height = int(1080/4)  # 변경하려는 높이
+        target_width = int(IMAGE_WIDTH)  # 변경하려는 너비
+        target_height = int(IMAGE_HEIGHT)  # 변경하려는 높이
         with lock:
             image_right_ = cv2.resize(image_right, (target_width, target_height))
 
@@ -146,10 +147,8 @@ class Kidnapper:
         # Save Result Images
         cv2.imwrite(os.path.join(self.output_save_path,f"kaze1.jpg"), img_kaze1)
 
-
         testset_pose = kidnapper.testset_json[img_idx]["odom"]
         estimated_pose = kidnapper.dataset_json[kaze_result[0]]["odom"]
-
 
         # ------------------ Print Output -------------------------------------
         self.printImage(kaze_result, testset_pose)
@@ -202,10 +201,7 @@ def main():
                 break
             kidnapper.EstimateDatasets(test_idx)
             rate.sleep()
-    
-
     return
 
 if __name__ == '__main__':
-
     main()
