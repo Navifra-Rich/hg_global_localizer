@@ -11,8 +11,9 @@ import cv2
 import os
 import math
 from threading import Lock
-
+import numpy as np
 lock = Lock()
+kaze = cv2.KAZE_create()
 
 odom_ = Odometry()
 bridge = CvBridge()
@@ -109,6 +110,13 @@ def save_db(odom, img):
     global scene_idx, data_list
     # save img
     img_path = f'{PACKAGE_DIR}/{RESULT_FOLDER}/{scene_idx}.jpg'  # 저장할 이미지 파일 경로 및 이름을 지정합니다
+    disc_path = f'{PACKAGE_DIR}/{RESULT_FOLDER}/{scene_idx}.npy'  # 저장할 이미지 파일 경로 및 이름을 지정합니다
+
+
+
+
+    kp_input_kaze, des_input_kaze = kaze.detectAndCompute(cv2.cvtColor(img[:,:,:], cv2.COLOR_BGR2GRAY), None)
+    np.save(disc_path, des_input_kaze)
     cv2.imwrite(img_path, img)
 
     px = odom.pose.pose.position.x

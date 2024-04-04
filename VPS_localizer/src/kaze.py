@@ -3,6 +3,7 @@
 import glob
 import cv2
 import os
+import numpy as np
 
 class KAZE_Matcher:
     def __init__(self):
@@ -15,7 +16,7 @@ class KAZE_Matcher:
         return
 
     def getImgList(self):
-        self.img_path_list = glob.glob(f'{self.dataset_path}'+os.sep+"*")
+        self.img_path_list = glob.glob(f'{self.dataset_path}'+os.sep+"*.npy")
         self.img_path_list.sort()
         self.img_path_list = self.img_path_list[:-1]
         # print(self.img_path_list)
@@ -27,13 +28,14 @@ class KAZE_Matcher:
         dist_list = []
         dist_list_kaze = []
         for idx, path in enumerate(self.img_path_list):
-            if idx%6!=0:
+            if idx%3!=0:
                 continue
-            # print(f"PATH {img_path}")
-            img = cv2.imread(path)
+            # print(f"PATH {path}")
 
-            kp_db_kaze, des_db_kaze = self.kaze.detectAndCompute(cv2.cvtColor(img[:,:,:], cv2.COLOR_BGR2GRAY), None)
-            match_kaze = self.kaze_matcher_.knnMatch(des_input_kaze, des_db_kaze, k=2)
+            descriptors = np.load(path)
+
+            # kp_db_kaze, des_db_kaze = self.kaze.detectAndCompute(cv2.cvtColor(img[:,:,:], cv2.COLOR_BGR2GRAY), None)
+            match_kaze = self.kaze_matcher_.knnMatch(des_input_kaze, descriptors, k=2)
             good_match_num = 0
             good_match_num_kaze = 0
 

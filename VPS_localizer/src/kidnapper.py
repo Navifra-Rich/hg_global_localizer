@@ -13,6 +13,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import json
 import glob
 from threading import Lock
+import numpy as np
 REALTIME_MODE = rospy.get_param("realtime_mode")
 PACKAGE_PATH = rospy.get_param("dir_package")
 DATASET_PATH = rospy.get_param("dir_dataset")
@@ -128,6 +129,7 @@ class Kidnapper:
 
         print(f"Test Index {img_idx}")
         img_path = os.path.join(DATASET_TEST_PATH, f"{img_idx}.jpg")
+
         print(f"Image path {img_path}")
         cv_image = cv2.imread(img_path)
         print(f"Image shape {cv_image.shape}")

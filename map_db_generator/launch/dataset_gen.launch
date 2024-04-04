@@ -6,8 +6,7 @@
     <!-- Global pos -->
     <param name="point_topic_name" value="/localization/robot_pos" />
     <!-- Image Data -->
-    <!-- <param name="left_image_topic_name" value="/camera1/color/image_raw/compressed" /> -->
-    <param name="result_folder" value="result_testset2" />
+    <param name="result_folder" value="result_dataset_with_np" />
     <param name="left_image_topic_name" value="/camera1/color/image_raw/compressed" />
     <param name="right_image_topic_name" value="/camera2/color/image_raw/compressed" />
     <!--******************************************************************************************* -->

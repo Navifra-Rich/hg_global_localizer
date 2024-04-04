@@ -4,7 +4,7 @@
     <!-- ************************ Change DIRECTORY here ********************** -->
 
     <!-- Database -->
-    <param name="dir_dataset" value="$(find map_db_generator)/result_dataset" />
+    <param name="dir_dataset" value="$(find map_db_generator)/result_dataset_with_np" />
 
 
     <!-- True = ROS topic, False = Testset -->
